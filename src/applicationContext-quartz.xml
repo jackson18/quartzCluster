@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+    <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+        <property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="triggers">
+        	<list>
+        		<ref bean="trigger1"/>  
+        		<ref bean="trigger2"/>
+        	</list>
+        </property>	
+    </bean>
+   
+    <bean id="jobDetail1" class="frameworkx.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+        <property name="targetObject" ref="simpleService"/>  
+        <property name="targetMethod" value="testMethod1"/>  
+        <property name="shouldRecover" value="true"/>  
+    </bean>  
+    <bean id="trigger1" class="org.springframework.scheduling.quartz.CronTriggerBean">  
+        <property name="jobDetail" ref="jobDetail1"/>  
+        <property name="cronExpression" value="0/5 * * ? * * *"/>  
+    </bean>      
+  	
+    <bean id="jobDetail2" class="frameworkx.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="simpleService"/>
+        <property name="targetMethod" value="testMethod2"/>
+		<property name="shouldRecover" value="true"/>
+    </bean>
+    <bean id="trigger2" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="jobDetail2"/>
+        <property name="startDelay" value="1"/>
+        <property name="repeatCount" value="100"/>
+        <property name="repeatInterval" value="1000"/>
+    </bean>
+    
+</beans>
